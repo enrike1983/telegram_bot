@@ -1,0 +1,105 @@
+<?php 
+
+	class TelegramBot {
+
+		protected $token = '118669216:AAGPKdS8513Mg-FVWO3yD0x6BJ36Qr7WNWs';
+		protected $updates_api = 'https://api.telegram.org/bot%s/getUpdates%s';
+		protected $send_message_api = 'https://api.telegram.org/bot%s/sendMessage';
+
+		protected function httpGet($url)
+		{
+		    $ch = curl_init();  
+		 
+		    curl_setopt($ch,CURLOPT_URL,$url);
+		    curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+		 
+		    $output = curl_exec($ch);
+		 
+		    curl_close($ch);
+		    return $output;
+		}
+
+		public function httpPost($url,$params)
+		{
+		  $postData = '';
+		   //create name value pairs seperated by &
+		   foreach($params as $k => $v) 
+		   { 
+		      $postData .= $k . '='.$v.'&'; 
+		   }
+		   rtrim($postData, '&');
+		 
+		    $ch = curl_init();  
+		 
+		    curl_setopt($ch,CURLOPT_URL,$url);
+		    curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+		    curl_setopt($ch,CURLOPT_HEADER, false); 
+		    curl_setopt($ch, CURLOPT_POST, count($postData));
+		        curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);    
+		 
+		    $output=curl_exec($ch);
+		 
+		    curl_close($ch);
+		    return $output;
+		 
+		}
+
+
+		public function getToken()
+		{
+			return $this->token;
+		}
+		
+
+		public function getOffset()
+		{
+			//prende ultimo valore in db +1
+			if($res = file_get_contents('offset.txt')) {
+				return (int) $res + 1;	
+			} else {
+				return '';
+			}
+		}
+
+		protected function setOffset($offset)
+		{
+			//setta ultimo valore prcessato e mette in db
+			$myfile = fopen("offset.txt", "w") or die("Unable to open file!");
+			fwrite($myfile, $offset);
+		}
+
+		public function process()
+		{
+			$offset = $this->getOffset();
+			if($offset) {
+				$offset = '?offset='.$offset;
+			}
+
+			$result = $this->httpGet(sprintf($this->updates_api, $this->getToken(), $offset));
+			
+			$array_res = json_decode($result, true);
+
+			if($array_res['ok']) {
+				//qui la mia logica applicativa
+				foreach($array_res['result'] as $el) {
+					
+					if($text = str_replace('/say', '', $el['message']['text'])) {
+						$res = $this->httpPost(sprintf($this->send_message_api, $this->token), array(
+							'chat_id' => $el['message']['chat']['id'],
+							'text' => $text
+						));
+					}
+				} 	
+				if(isset($el['update_id']))
+					$this->setOffset($el['update_id']);
+			}
+
+		}
+
+	}
+
+	$tb = new TelegramBot();
+
+	$result = $tb->process();
+
+?>
