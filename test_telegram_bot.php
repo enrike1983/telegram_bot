@@ -1,10 +1,12 @@
 <?php 
 
+include 'config.php';
+
+
 	class TelegramBot {
 
         const SAY_COMMAND = '/say';
 
-		protected $token = '';
 		protected $updates_api = 'https://api.telegram.org/bot%s/getUpdates%s';
 		protected $send_message_api = 'https://api.telegram.org/bot%s/sendMessage';
         protected $filename = 'data';
@@ -47,6 +49,11 @@
 		 
 		}
 
+        public function getToken()
+        {
+            return Config::TOKEN;
+        }
+
 		public function getOffset()
 		{
 			//prende ultimo valore in db +1
@@ -72,7 +79,7 @@
 			}
 
             try {
-                $result = $this->httpGet(sprintf($this->updates_api, $this->token, $offset));
+                $result = $this->httpGet(sprintf($this->updates_api, $this->getToken(), $offset));
                 $array_res = json_decode($result, true);
 
                 if($array_res['ok']) {
@@ -97,7 +104,7 @@
         protected function say($el)
         {
             if($text = str_replace('/say', '', $el['message']['text'])) {
-                $res = $this->httpPost(sprintf($this->send_message_api, $this->token), array(
+                $res = $this->httpPost(sprintf($this->send_message_api, $this->getToken()), array(
                     'chat_id' => $el['message']['chat']['id'],
                     'text' => $text
                 ));
