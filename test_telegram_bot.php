@@ -4,7 +4,7 @@
 
         const SAY_COMMAND = '/say';
 
-		protected $token = '118669216:AAGPKdS8513Mg-FVWO3yD0x6BJ36Qr7WNWs';
+		protected $token = '';
 		protected $updates_api = 'https://api.telegram.org/bot%s/getUpdates%s';
 		protected $send_message_api = 'https://api.telegram.org/bot%s/sendMessage';
         protected $filename = 'data';
