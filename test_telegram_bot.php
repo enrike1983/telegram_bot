@@ -5,6 +5,7 @@
 		protected $token = '118669216:AAGPKdS8513Mg-FVWO3yD0x6BJ36Qr7WNWs';
 		protected $updates_api = 'https://api.telegram.org/bot%s/getUpdates%s';
 		protected $send_message_api = 'https://api.telegram.org/bot%s/sendMessage';
+        protected $filename = 'data';
 
 		protected function httpGet($url)
 		{
@@ -44,17 +45,10 @@
 		 
 		}
 
-
-		public function getToken()
-		{
-			return $this->token;
-		}
-		
-
 		public function getOffset()
 		{
 			//prende ultimo valore in db +1
-			if($res = file_get_contents('data')) {
+			if($res = file_get_contents($this->filename)) {
 				return (int) $res + 1;	
 			} else {
 				return '';
@@ -64,7 +58,7 @@
 		protected function setOffset($offset)
 		{
 			//setta ultimo valore prcessato e mette in db
-			$myfile = fopen("data", "w") or die("Unable to open file!");
+			$myfile = fopen($this->filename, "w") or die("Unable to open file!");
 			fwrite($myfile, $offset);
 		}
 
@@ -75,27 +69,29 @@
 				$offset = '?offset='.$offset;
 			}
 
-			$result = $this->httpGet(sprintf($this->updates_api, $this->getToken(), $offset));
-			
-			$array_res = json_decode($result, true);
+            try {
 
-			if($array_res['ok']) {
-				//qui la mia logica applicativa
-				foreach($array_res['result'] as $el) {
-					
-					if($text = str_replace('/say', '', $el['message']['text'])) {
-						$res = $this->httpPost(sprintf($this->send_message_api, $this->token), array(
-							'chat_id' => $el['message']['chat']['id'],
-							'text' => $text
-						));
-					}
-				} 	
-				if(isset($el['update_id']))
-					$this->setOffset($el['update_id']);
-			}
+                $result = $this->httpGet(sprintf($this->updates_api, $this->token, $offset));
+                $array_res = json_decode($result, true);
 
+                if($array_res['ok']) {
+                    //qui la mia logica applicativa
+                    foreach($array_res['result'] as $el) {
+
+                        if($text = str_replace('/say', '', $el['message']['text'])) {
+                            $res = $this->httpPost(sprintf($this->send_message_api, $this->token), array(
+                                'chat_id' => $el['message']['chat']['id'],
+                                'text' => $text
+                            ));
+                        }
+                    }
+                    if(isset($el['update_id']))
+                        $this->setOffset($el['update_id']);
+                }
+            } catch(\Exception $e) {
+                echo $e->getMessage();
+            }
 		}
-
 	}
 
 	$tb = new TelegramBot();
