@@ -54,7 +54,7 @@
 		public function getOffset()
 		{
 			//prende ultimo valore in db +1
-			if($res = file_get_contents('offset.txt')) {
+			if($res = file_get_contents('data')) {
 				return (int) $res + 1;	
 			} else {
 				return '';
@@ -64,7 +64,7 @@
 		protected function setOffset($offset)
 		{
 			//setta ultimo valore prcessato e mette in db
-			$myfile = fopen("offset.txt", "w") or die("Unable to open file!");
+			$myfile = fopen("data", "w") or die("Unable to open file!");
 			fwrite($myfile, $offset);
 		}
 
