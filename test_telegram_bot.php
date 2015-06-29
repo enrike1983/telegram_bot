@@ -2,6 +2,8 @@
 
 	class TelegramBot {
 
+        const SAY_COMMAND = '/say';
+
 		protected $token = '118669216:AAGPKdS8513Mg-FVWO3yD0x6BJ36Qr7WNWs';
 		protected $updates_api = 'https://api.telegram.org/bot%s/getUpdates%s';
 		protected $send_message_api = 'https://api.telegram.org/bot%s/sendMessage';
@@ -70,7 +72,6 @@
 			}
 
             try {
-
                 $result = $this->httpGet(sprintf($this->updates_api, $this->token, $offset));
                 $array_res = json_decode($result, true);
 
@@ -78,20 +79,30 @@
                     //qui la mia logica applicativa
                     foreach($array_res['result'] as $el) {
 
-                        if($text = str_replace('/say', '', $el['message']['text'])) {
-                            $res = $this->httpPost(sprintf($this->send_message_api, $this->token), array(
-                                'chat_id' => $el['message']['chat']['id'],
-                                'text' => $text
-                            ));
+                        $command = substr($el['message']['text'], 0, strpos($el['message']['text'], ' '));
+
+                        switch($command) {
+                            case self::SAY_COMMAND:
+                                $this->say($el);
                         }
                     }
                     if(isset($el['update_id']))
                         $this->setOffset($el['update_id']);
                 }
             } catch(\Exception $e) {
-                echo $e->getMessage();
+                echo 'E\' successo qualcosa di brutto!';
             }
 		}
+
+        protected function say($el)
+        {
+            if($text = str_replace('/say', '', $el['message']['text'])) {
+                $res = $this->httpPost(sprintf($this->send_message_api, $this->token), array(
+                    'chat_id' => $el['message']['chat']['id'],
+                    'text' => $text
+                ));
+            }
+        }
 	}
 
 	$tb = new TelegramBot();
