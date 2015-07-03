@@ -1,9 +1,15 @@
-<?php 
+<?php
 
+namespace Telegram;
+
+use Telegram\Crawler;
+use Telegram\Config;
+
+require __DIR__ . '/vendor/autoload.php';
 include 'config.php';
+include 'Crawler.php';
 
-
-	class TelegramBot {
+	class Bot {
 
         const SAY_COMMAND = '/say';
 
@@ -105,12 +111,14 @@ include 'config.php';
         {
             if($text = str_replace('/say', '', $el['message']['text'])) {
 
+                $cinemas = Crawler::findCinemas('http://www.google.it/movies?near='.urlencode($text));
+
                 //creazione tastiera
                 $content = array(
                     'chat_id' => $el['message']['chat']['id'],
                     'reply_markup' => json_encode(array(
                         'keyboard' => array(
-                            array("A", "B", "C")
+                            $cinemas
                         )
                     )),
                     'text' => "Test"
@@ -129,7 +137,7 @@ include 'config.php';
         }
 	}
 
-	$tb = new TelegramBot();
+	$tb = new Bot();
 
 	$result = $tb->process();
 
