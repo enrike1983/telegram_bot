@@ -112,9 +112,7 @@ include 'Crawler.php';
                 $content = array(
                     'chat_id' => $el['message']['chat']['id'],
                     'reply_markup' => json_encode(array(
-                        'keyboard' => array(
-                            $cinemas
-                        )
+                        'keyboard' => $cinemas
                     )),
                     'text' => "Ecco i cinema di ".$text
                 );
