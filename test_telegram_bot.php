@@ -86,23 +86,17 @@ include 'Crawler.php';
 
             try {
                 //$result = $this->httpGet(sprintf($this->updates_api, $this->getToken(), $offset));
-                die(var_dump($_REQUEST));
-                $array_res = json_decode($_POST, true);
+                $message = json_decode(file_get_contents('php://input'), true);
+                // if it's not a valid JSON return
+                if(is_null($message)) return;
 
-                if($array_res['ok']) {
-                    //qui la mia logica applicativa
-                    foreach($array_res['result'] as $el) {
+                $command = substr($message['message']['text'], 0, strpos($message['message']['text'], ' '));
 
-                        $command = substr($el['message']['text'], 0, strpos($el['message']['text'], ' '));
-
-                        switch($command) {
-                            case self::SAY_COMMAND:
-                                $this->say($el);
-                        }
-                    }
-                    if(isset($el['update_id']))
-                        $this->setOffset($el['update_id']);
+                switch($command) {
+                    case self::SAY_COMMAND:
+                        $this->say($message);
                 }
+
             } catch(\Exception $e) {
                 echo 'E\' successo qualcosa di brutto!';
             }
