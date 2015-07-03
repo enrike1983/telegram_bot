@@ -104,10 +104,27 @@ include 'config.php';
         protected function say($el)
         {
             if($text = str_replace('/say', '', $el['message']['text'])) {
-                $res = $this->httpPost(sprintf($this->send_message_api, $this->getToken()), array(
+
+                //creazione tastiera
+                $content = array(
+                    'chat_id' => $el['message']['chat']['id'],
+                    'reply_markup' => json_encode(array(
+                        'keyboard' => array(
+                            array("A", "B", "C")
+                        )
+                    )),
+                    'text' => "Test"
+                );
+
+                //messaggio standard
+                /*$content = array(
                     'chat_id' => $el['message']['chat']['id'],
                     'text' => $text
-                ));
+                );  */
+
+                $res = $this->httpPost(sprintf($this->send_message_api, $this->getToken()),
+                    $content
+                );
             }
         }
 	}
