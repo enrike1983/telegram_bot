@@ -121,7 +121,7 @@ include 'Crawler.php';
                             $cinemas
                         )
                     )),
-                    'text' => "Test"
+                    'text' => "Ecco i cinema di ".$text
                 );
 
                 //messaggio standard

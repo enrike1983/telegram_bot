@@ -16,7 +16,7 @@ class Crawler
             foreach($cinema->children() as $theater){
                 foreach($theater->find('.desc') as $els) {
                     foreach($els->find('h2') as $title) {
-                        $res[] = array($title->text());
+                        $res[] = $title->text();
                     }
                 }
                 //$res
