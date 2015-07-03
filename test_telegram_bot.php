@@ -85,7 +85,9 @@ include 'Crawler.php';
 			}
 
             try {
-                $result = $this->httpGet(sprintf($this->updates_api, $this->getToken(), $offset));
+                //$result = $this->httpGet(sprintf($this->updates_api, $this->getToken(), $offset));
+                $result = file_get_contents('php://input');
+                die(var_dump($result));
                 $array_res = json_decode($result, true);
 
                 if($array_res['ok']) {
@@ -111,7 +113,8 @@ include 'Crawler.php';
         {
             if($text = str_replace('/say', '', $el['message']['text'])) {
 
-                $cinemas = Crawler::findCinemas('http://www.google.it/movies?near='.urlencode($text));
+                //$cinemas = Crawler::findCinemas('http://www.google.it/movies?near='.urlencode($text));
+                $cinemas = array('uno', 'due', 'tre');
 
                 //creazione tastiera
                 $content = array(
