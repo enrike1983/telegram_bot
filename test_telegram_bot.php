@@ -106,8 +106,8 @@ include 'Crawler.php';
         {
             if($text = str_replace('/say', '', $el['message']['text'])) {
 
-                //$cinemas = Crawler::findCinemas('http://www.google.it/movies?near='.urlencode($text));
-                $cinemas = array('uno', 'due', 'tre');
+                $cinemas = Crawler::findCinemas('http://www.google.it/movies?near='.urlencode($text));
+                //$cinemas = array('uno', 'due', 'tre');
 
                 //creazione tastiera
                 $content = array(
