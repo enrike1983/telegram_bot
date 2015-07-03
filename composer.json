@@ -1,7 +1,7 @@
 {
   "require": {
-    "ext-mbstring": "*",
-    "sunra/php-simple-html-dom-parser": "v1.5.0"
+    "sunra/php-simple-html-dom-parser": "v1.5.0",
+    "ext-mbstring": "*"
   }
 }
 
