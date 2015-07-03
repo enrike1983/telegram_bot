@@ -86,7 +86,7 @@ include 'Crawler.php';
 
             try {
                 //$result = $this->httpGet(sprintf($this->updates_api, $this->getToken(), $offset));
-                die(var_dump($_POST));
+                die(var_dump($_REQUEST));
                 $array_res = json_decode($_POST, true);
 
                 if($array_res['ok']) {
