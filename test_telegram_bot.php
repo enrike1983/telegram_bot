@@ -76,6 +76,7 @@ die();
                 switch($command) {
                     case self::SAY_COMMAND:
                         $this->say($message);
+                }
 
 
             } catch(\Exception $e) {
