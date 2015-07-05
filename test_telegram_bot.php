@@ -13,9 +13,7 @@ include 'Crawler.php';
 
         const SAY_COMMAND = '/say';
 
-		protected $updates_api = 'https://api.telegram.org/bot%s/getUpdates%s';
 		protected $send_message_api = 'https://api.telegram.org/bot%s/sendMessage';
-        protected $filename = 'data';
 
 		protected function httpGet($url)
 		{
@@ -60,42 +58,25 @@ include 'Crawler.php';
             return Config::TOKEN;
         }
 
-		public function getOffset()
-		{
-			//prende ultimo valore in db +1
-			if($res = file_get_contents($this->filename)) {
-				return (int) $res + 1;	
-			} else {
-				return '';
-			}
-		}
-
-		protected function setOffset($offset)
-		{
-			//setta ultimo valore prcessato e mette in db
-			$myfile = fopen($this->filename, "w") or die("Unable to open file!");
-			fwrite($myfile, $offset);
-		}
-
 		public function process()
 		{
-			$offset = $this->getOffset();
-			if($offset) {
-				$offset = '?offset='.$offset;
-			}
-
             try {
-                //$result = $this->httpGet(sprintf($this->updates_api, $this->getToken(), $offset));
+                
                 $message = json_decode(file_get_contents('php://input'), true);
                 // if it's not a valid JSON return
                 if(is_null($message)) return;
+
+$myfile = fopen("data", "w") or die("Unable to open file!");
+fwrite($myfile, var_dump($message));
+fclose($myfile);
+die();
 
                 $command = substr($message['message']['text'], 0, strpos($message['message']['text'], ' '));
 
                 switch($command) {
                     case self::SAY_COMMAND:
                         $this->say($message);
-                }
+
 
             } catch(\Exception $e) {
                 echo 'E\' successo qualcosa di brutto!';
@@ -114,7 +95,7 @@ include 'Crawler.php';
                     'reply_markup' => json_encode(array(
                         'keyboard' => $cinemas
                     )),
-                    'text' => "Ecco i cinema di ".$text
+                    'text' => "Ecco i cinema di".$text
                 );
 
                 //messaggio standard
