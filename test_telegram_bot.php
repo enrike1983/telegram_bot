@@ -60,15 +60,16 @@ include 'Crawler.php';
 
 		public function process()
 		{
-            try {
-                
                 $message = json_decode(file_get_contents('php://input'), true);
 
 $myfile = fopen("data", "w") or die("Unable to open file!");
 fwrite($myfile, var_dump(file_get_contents('php://input')));
 fclose($myfile);
 die();	
-
+			
+            try {
+                
+                $message = json_decode(file_get_contents('php://input'), true);
                 // if it's not a valid JSON return
                 if(is_null($message)) return;
 
