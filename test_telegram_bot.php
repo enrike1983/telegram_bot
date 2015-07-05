@@ -65,7 +65,10 @@ include 'Crawler.php';
                 $message = json_decode(file_get_contents('php://input'), true);
 
                 //dump
-                file_put_contents('dump', 'test');
+                $current = file_get_contents($file);
+				// Append a new person to the file
+				$current .= var_dump($message);
+                file_put_contents('dump', $current);
 
                 // if it's not a valid JSON return
                 if(is_null($message)) return;
