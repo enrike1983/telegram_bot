@@ -63,13 +63,14 @@ include 'Crawler.php';
             try {
                 
                 $message = json_decode(file_get_contents('php://input'), true);
-                // if it's not a valid JSON return
-                if(is_null($message)) return;
 
 $myfile = fopen("data", "w") or die("Unable to open file!");
 fwrite($myfile, var_dump($message));
 fclose($myfile);
 die();
+                
+                // if it's not a valid JSON return
+                if(is_null($message)) return;
 
                 $command = substr($message['message']['text'], 0, strpos($message['message']['text'], ' '));
 
