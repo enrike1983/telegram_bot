@@ -65,7 +65,7 @@ include 'Crawler.php';
                 $message = json_decode(file_get_contents('php://input'), true);
 
                 //dump
-                file_put_contents('dump', $message);
+                file_put_contents('dump', 'test');
 
                 // if it's not a valid JSON return
                 if(is_null($message)) return;
