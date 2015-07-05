@@ -65,7 +65,7 @@ include 'Crawler.php';
                 $message = json_decode(file_get_contents('php://input'), true);
 
                 //dump
-                $current = file_get_contents($file);
+                $current = file_get_contents('dump');
 				// Append a new person to the file
 				$current .= var_dump($message);
                 file_put_contents('dump', $current);
