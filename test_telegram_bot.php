@@ -71,21 +71,16 @@ include 'Crawler.php';
 
                 //chat ID
                 $chat_id = $message["message"]["chat"]["id"];
-
-                //escape characters
-                if(!preg_match("/\/eval/", $message['message']['text'])) return;
+                $command = substr($message['message']['text'], 0, strpos($message['message']['text'], ' '));
 
                 // show to the client that the bot is typing
                 file_get_contents($this->base_api.$this->send_chat_action_api."?chat_id=".$chat_id."&action=typing");
-
-                $command = substr($message['message']['text'], 0, strpos($message['message']['text'], ' '));
 
                 //main router for commands
                 switch($command) {
                     case self::SAY_COMMAND:
                         $this->say($message);
                 }
-
 
             } catch(\Exception $e) {
                 echo 'Something bad happened';
