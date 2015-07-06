@@ -95,7 +95,7 @@ include 'Crawler.php';
 
         protected function say($el)
         {
-            if($text = str_replace('/say', '', $el['message']['text'])) {
+            if($text = str_replace(self::SAY_COMMAND, '', $el['message']['text'])) {
 
                 $cinemas = Crawler::findCinemas($this->google_movies_endpoint.'?near='.urlencode($text));
 
@@ -116,15 +116,27 @@ include 'Crawler.php';
 
         protected function movies($el)
         {
-            //reply TEST
-            $content = array(
-                'chat_id' => $el['message']['chat']['id'],
-                'text' => "Ti verrà inviata la programmazione!"
-            );
+            if($cinema_name = str_replace(self::GET_PROGRAMMAZIONE_COMMAND, '', $el['message']['text'])) {
 
-            $res = $this->httpPost(sprintf($this->base_api.$this->send_message_api, $this->getToken()),
-                $content
-            );
+                if(isset($el['message']['reply_to_message'])) {
+                    if($city_name = str_replace(self::SAY_COMMAND, '', $el['message']['reply_to_message']['text'])) {
+
+                        $movies = Crawler::findMovies($this->google_movies_endpoint.'?near='.urlencode($city_name), $cinema_name);
+
+                        $content = array(
+                            'chat_id' => $el['message']['chat']['id'],
+                            'reply_markup' => json_encode(array(
+                                'keyboard' => $movies
+                            )),
+                            'text' => "Ecco la programmazione"
+                        );
+
+                        $res = $this->httpPost(sprintf($this->base_api.$this->send_message_api, $this->getToken()),
+                            $content
+                        );
+                    }
+                }
+            }
         }
 	}
 
