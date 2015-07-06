@@ -45,7 +45,7 @@ class Crawler
                 }
             }
         }
-        die(var_dump($res));
+        
         return $res;
     }
 }
