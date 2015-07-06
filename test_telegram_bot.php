@@ -12,6 +12,9 @@ include 'Crawler.php';
 	class Bot {
 
         const SAY_COMMAND = '/say';
+        const GET_PROGRAMMAZIONE_COMMAND = '/programmazione';
+
+        protected $google_movies_endpoint = 'http://www.google.it/movies';
 
         protected $base_api = 'https://api.telegram.org/bot%s';
 		protected $send_message_api = '/sendMessage';
@@ -80,8 +83,11 @@ include 'Crawler.php';
                 switch($command) {
                     case self::SAY_COMMAND:
                         $this->say($message);
+                        break;
+                    case self::GET_PROGRAMMAZIONE_COMMAND:
+                        $this->movies($message);
+                        break;
                 }
-
             } catch(\Exception $e) {
                 echo 'Something bad happened';
             }
@@ -91,7 +97,7 @@ include 'Crawler.php';
         {
             if($text = str_replace('/say', '', $el['message']['text'])) {
 
-                $cinemas = Crawler::findCinemas('http://www.google.it/movies?near='.urlencode($text));
+                $cinemas = Crawler::findCinemas($this->google_movies_endpoint.'?near='.urlencode($text));
 
                 //creazione tastiera
                 $content = array(
@@ -102,16 +108,23 @@ include 'Crawler.php';
                     'text' => "Ecco i cinema di".$text
                 );
 
-                //messaggio standard
-                /*$content = array(
-                    'chat_id' => $el['message']['chat']['id'],
-                    'text' => $text
-                );  */
-
                 $res = $this->httpPost(sprintf($this->base_api.$this->send_message_api, $this->getToken()),
                     $content
                 );
             }
+        }
+
+        protected function movies($el)
+        {
+            //reply TEST
+            $content = array(
+                'chat_id' => $el['message']['chat']['id'],
+                'text' => "Ti verrà inviata la programmazione!"
+            );
+
+            $res = $this->httpPost(sprintf($this->base_api.$this->send_message_api, $this->getToken()),
+                $content
+            );
         }
 	}
 

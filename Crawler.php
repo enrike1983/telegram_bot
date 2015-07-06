@@ -3,6 +3,7 @@
 namespace Telegram;
 
 use Sunra\PhpSimple\HtmlDomParser;
+use Telegram\Bot;
 
 class Crawler
 {
@@ -16,12 +17,16 @@ class Crawler
             foreach($cinema->children() as $theater){
                 foreach($theater->find('.desc') as $els) {
                     foreach($els->find('h2') as $title) {
-                        $res[] = array($title->text());
+                        $res[] = array(Bot::GET_PROGRAMMAZIONE_COMMAND.' '.$title->text());
                     }
                 }
                 //$res
             }
         }
         return $res;
+    }
+
+    public function findMovies($str)
+    {
     }
 }
