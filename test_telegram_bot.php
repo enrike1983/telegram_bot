@@ -66,7 +66,8 @@ include 'Crawler.php';
 		public function process()
 		{
             try {
-                
+                $movies = Crawler::findMovies($this->google_movies_endpoint.'?near='.urlencode('bergamo'), 'uci cinemas curno');
+
                 $message = json_decode(file_get_contents('php://input'), true);
 
                 // if it's not a valid JSON return
