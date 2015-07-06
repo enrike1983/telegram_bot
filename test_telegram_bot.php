@@ -66,7 +66,7 @@ include 'Crawler.php';
 		public function process()
 		{
             try {
-                $movies = Crawler::findMovies($this->google_movies_endpoint.'?near='.urlencode('bergamo'), 'uci cinemas curno');
+                //$movies = Crawler::findMovies($this->google_movies_endpoint.'?near='.urlencode('bergamo'), 'uci cinemas curno');
 
                 $message = json_decode(file_get_contents('php://input'), true);
 
@@ -122,7 +122,7 @@ include 'Crawler.php';
                 if(isset($el['message']['reply_to_message'])) {
                     if($city_name = str_replace(self::SAY_COMMAND, '', $el['message']['reply_to_message']['text'])) {
 
-                        $movies = Crawler::findMovies($this->google_movies_endpoint.'?near='.urlencode($city_name), $cinema_name);
+                        $movies = Crawler::findMovies($this->google_movies_endpoint.'?near='.urlencode($city_name), strtolower($cinema_name));
 
                         $content = array(
                             'chat_id' => $el['message']['chat']['id'],
