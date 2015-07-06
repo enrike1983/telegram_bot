@@ -13,7 +13,9 @@ include 'Crawler.php';
 
         const SAY_COMMAND = '/say';
 
-		protected $send_message_api = 'https://api.telegram.org/bot%s/sendMessage';
+        protected $base_api = 'https://api.telegram.org/bot%s';
+		protected $send_message_api = '/sendMessage';
+        protected $send_chat_action_api = '/sendChatAction';
 
 		protected function httpGet($url)
 		{
@@ -64,14 +66,21 @@ include 'Crawler.php';
                 
                 $message = json_decode(file_get_contents('php://input'), true);
 
-                //dump
-                file_put_contents('dump.d', var_dump(file_get_contents('php://input')), FILE_APPEND | LOCK_EX);
-
                 // if it's not a valid JSON return
                 if(is_null($message)) return;
 
+                //chat ID
+                $chat_id = $message["message"]["chat"]["id"];
+
+                //escape characters
+                if(!preg_match("/\/eval/", $message['message']['text'])) return;
+
+                // show to the client that the bot is typing
+                file_get_contents($this->base_api.$this->send_chat_action_api."?chat_id=".$chat_id."&action=typing");
+
                 $command = substr($message['message']['text'], 0, strpos($message['message']['text'], ' '));
 
+                //main router for commands
                 switch($command) {
                     case self::SAY_COMMAND:
                         $this->say($message);
@@ -79,7 +88,7 @@ include 'Crawler.php';
 
 
             } catch(\Exception $e) {
-                echo 'E\' successo qualcosa di brutto!';
+                echo 'Something bad happened';
             }
 		}
 
@@ -104,7 +113,7 @@ include 'Crawler.php';
                     'text' => $text
                 );  */
 
-                $res = $this->httpPost(sprintf($this->send_message_api, $this->getToken()),
+                $res = $this->httpPost(sprintf($this->base_api.$this->send_message_api, $this->getToken()),
                     $content
                 );
             }
