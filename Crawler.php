@@ -45,7 +45,7 @@ class Crawler
                 }
             }
         }
-        
+
         return $res;
     }
 }

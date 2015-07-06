@@ -127,7 +127,7 @@ include 'Crawler.php';
                         $content = array(
                             'chat_id' => $el['message']['chat']['id'],
                             'reply_markup' => json_encode(array(
-                                'keyboard' => $movies
+                                'keyboard' => array("A", "B")//$movies
                             )),
                             'text' => "Ecco la programmazione"
                         );
